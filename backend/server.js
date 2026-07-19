@@ -1191,7 +1191,7 @@ app.get("/api/reports/stock", (req, res) => {
 });
 
 // ============================================
-// ANALYTICS API - COMPLETELY FIXED
+// ANALYTICS API
 // ============================================
 
 // Helper: Get start date for range filter
@@ -2360,37 +2360,44 @@ async function startServer() {
 
   console.log("✅ Database connection established!");
 
-  app.listen(PORT, () => {
-    console.log("🚀 SPMS Backend running on http://localhost:" + PORT);
-    console.log("📊 Test API: http://localhost:" + PORT + "/api/test");
-    console.log("📁 Connected to Access database successfully!");
-    console.log("");
-    console.log("📋 Available Endpoints:");
-    console.log("  🔐 Auth:          POST /api/auth/login");
-    console.log("  👥 Customers:     GET/POST /api/customers");
-    console.log("  📦 Products:      GET/POST /api/products");
-    console.log("  🛒 Orders:        GET /api/orders");
-    console.log("  📋 Order:         GET /api/orders/:id (details)");
-    console.log("  💳 Payments:      GET /api/payment-methods");
-    console.log("  💰 Payment:       POST /api/payments/record");
-    console.log("  📊 Stock:         GET /api/stock");
-    console.log("  📊 Stock Product: GET /api/stock/product/:id");
-    console.log("  💳 Purchase:      POST /api/purchase");
-    console.log("  📋 Reports:       GET /api/reports/*");
-    console.log("  👤 Users:         GET /api/users");
-    console.log("  📝 Activity:      GET /api/activity-logs");
-    console.log("  🛡️ Warranty:      GET /api/warranty");
-    console.log("  🔧 Services:      GET /api/services");
-    console.log("  📊 Analytics:     GET /api/analytics/*");
-    console.log("  🔍 Debug:         GET /api/debug/table/:name");
-    console.log("  📈 Reports:       GET /api/reports/monthly-sales");
-    console.log("  📈 Reports:       GET /api/reports/product-performance");
-    console.log("  📈 Reports:       GET /api/reports/customer-analytics");
-    console.log("  📈 Reports:       GET /api/reports/revenue-summary");
-  });
+  // Only start server locally, not on Vercel
+  const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+  
+  if (!isVercel) {
+    app.listen(PORT, () => {
+      console.log("🚀 SPMS Backend running on http://localhost:" + PORT);
+      console.log("📊 Test API: http://localhost:" + PORT + "/api/test");
+      console.log("📁 Connected to Access database successfully!");
+      console.log("");
+      console.log("📋 Available Endpoints:");
+      console.log("  🔐 Auth:          POST /api/auth/login");
+      console.log("  👥 Customers:     GET/POST /api/customers");
+      console.log("  📦 Products:      GET/POST /api/products");
+      console.log("  🛒 Orders:        GET /api/orders");
+      console.log("  📋 Order:         GET /api/orders/:id (details)");
+      console.log("  💳 Payments:      GET /api/payment-methods");
+      console.log("  💰 Payment:       POST /api/payments/record");
+      console.log("  📊 Stock:         GET /api/stock");
+      console.log("  📊 Stock Product: GET /api/stock/product/:id");
+      console.log("  💳 Purchase:      POST /api/purchase");
+      console.log("  📋 Reports:       GET /api/reports/*");
+      console.log("  👤 Users:         GET /api/users");
+      console.log("  📝 Activity:      GET /api/activity-logs");
+      console.log("  🛡️ Warranty:      GET /api/warranty");
+      console.log("  🔧 Services:      GET /api/services");
+      console.log("  📊 Analytics:     GET /api/analytics/*");
+      console.log("  🔍 Debug:         GET /api/debug/table/:name");
+    });
+  }
 }
 
 startServer().catch((err) => {
   console.error("❌ Server startup failed:", err.message);
   process.exit(1);
 });
+
+// ============================================
+// EXPORT for Vercel (Serverless)
+// ============================================
+// This must be at the top level, not inside any condition
+module.exports = app;
